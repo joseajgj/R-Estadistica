@@ -1,0 +1,203 @@
+---
+title: "**Diagnóstico del modelo - Contrastes de bondad de ajuste**"
+author: "Grado en Ingeniería Informática"
+date: "2022/23"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library (readxl)
+HabitosMusicales<-read_excel ("HabitosMusicales.xlsx")
+```
+
+```{r}
+ABStable<-table(HabitosMusicales$Tiempo)
+ABStable
+```
+```{r}
+barplot(ABStable, main="Horas de música escuchada", col="blue", xlab="zonas", ylab="frecuencia", ylim=c(0,12), axis.lty="solid")
+pie(ABStable, col=terrain.colors(15))
+```
+
+```{r}
+Tiempo<-HabitosMusicales$Tiempo
+descr(Tiempo)
+
+descr(HabitosMusicales)
+```
+```{r}
+boxplot(HabitosMusicales$Tiempo,xlab="Tiempo en min",main="Diagrama de Caja", horizontal=TRUE, col="cadetblue1")
+       # Add it over
+hist(HabitosMusicales$Tiempo, xlab="Tiempo en min", ylab="Frecuencia", main="Histograma Tiempo", breaks = 12,col="cornflowerblue")
+
+```
+
+
+```{r}
+parte1 <- HabitosMusicales$Tiempo[HabitosMusicales$Tiempo < 350]
+suppressWarnings(library(summarytools))
+descr(parte1)
+
+
+hist(parte1,
+ probability = TRUE, # histograma tiene area = 1
+ xlab = "Tiempo escuchado",ylab="Densidad", main="Histograma Tiempo",ylim = c(0,0.0051), col="cornflowerblue")
+
+curve(dnorm(x, mean(parte1),sd(parte1)), col="red", lwd=2, add=TRUE, yaxt="n")
+
+legend("topright", c(expression(paste(,"Distribución ")), "Normal"),
+       lty = c(0, 1, 1), col = c("red"), box.lty = 0, lwd = 2)
+
+```
+```{r}
+parte1 <- HabitosMusicales$Tiempo[HabitosMusicales$Tiempo < 350]
+library(fitdistrplus)
+library(nortest)
+ad.test(parte1)
+cvm.test(parte1)
+lillie.test(parte1)
+pearson.test(parte1)
+sf.test(parte1)
+normalfit <- fitdist(parte1, "norm")
+plot(normalfit,col="cornflowerblue")
+```
+```{r}
+xsd = sd(HabitosMusicales$Tiempo)
+z.test(HabitosMusicales$Tiempo, sigma.x = xsd)$conf.int
+```
+```{r}
+
+t.test(HabitosMusicales$Tiempo)$conf.int
+
+
+```
+
+```{r}
+#NO ES FIABLE
+varTest(HabitosMusicales$Tiempo)$conf.int
+```
+```{r}
+t.test(HabitosMusicales$Tiempo, mu = 220, alternative = "less")
+pnorm(-0.19245, lower.tail = FALSE)
+```
+```{r}
+Rock <- HabitosMusicales$Tiempo[HabitosMusicales$Género == "Rock"]
+t.test(Rock)$conf.int
+varTest(Rock)$conf.int
+t.test(Rock, mu = 217.50, alternative = "greater")
+pnorm(-1.051, lower.tail = FALSE)
+summary(Rock)
+library(fitdistrplus)
+library(nortest)
+ad.test(Rock)
+cvm.test(Rock)
+lillie.test(Rock)
+pearson.test(Rock)
+sf.test(Rock)
+normalfit <- fitdist(parte1, "norm")
+plot(normalfit,col="cornflowerblue")
+```
+```{r}
+Electrónica <- HabitosMusicales$Tiempo[HabitosMusicales$Género == "Electrónica"]
+t.test(Electrónica)$conf.int
+varTest(Electrónica)$conf.int
+t.test(Electrónica, mu = 217.50, alternative = "less")
+pnorm(-0.10275, lower.tail = FALSE)
+library(fitdistrplus)
+library(nortest)
+ad.test(Electrónica)
+cvm.test(Electrónica)
+lillie.test(Electrónica)
+pearson.test(Electrónica)
+sf.test(Electrónica)
+normalfit <- fitdist(parte1, "norm")
+plot(normalfit,col="cornflowerblue")
+```
+
+```{r}
+Rap <- HabitosMusicales$Tiempo[HabitosMusicales$Género == "Rap/Trap"]
+t.test(Rap)$conf.int
+varTest(Rap)$conf.int
+t.test(Rap, mu = 217.50, alternative = "greater")
+pnorm(1.208, lower.tail = FALSE)
+library(fitdistrplus)
+library(nortest)
+ad.test(Rap)
+cvm.test(Rap)
+lillie.test(Rap)
+pearson.test(Rap)
+sf.test(Rap)
+normalfit <- fitdist(parte1, "norm")
+plot(normalfit,col="cornflowerblue")
+```
+```{r}
+Pop <- HabitosMusicales$Tiempo[HabitosMusicales$Género == "Pop"]
+t.test(Pop)$conf.int
+varTest(Pop)$conf.int
+t.test(Pop, mu = 217.50, alternative = "less")
+pnorm(0.050508, lower.tail = FALSE)
+library(fitdistrplus)
+library(nortest)
+ad.test(Pop)
+cvm.test(Pop)
+lillie.test(Pop)
+pearson.test(Pop)
+sf.test(Pop)
+normalfit <- fitdist(parte1, "norm")
+plot(normalfit,col="cornflowerblue")
+```
+```{r}
+Regueton <- HabitosMusicales$Tiempo[HabitosMusicales$Género == "Reguetón"]
+t.test(Regueton)$conf.int
+varTest(Regueton)$conf.int
+t.test(Regueton, mu = 217.50, alternative = "less")
+pnorm(-0.45724, lower.tail = FALSE)
+library(fitdistrplus)
+library(nortest)
+ad.test(Regueton)
+cvm.test(Regueton)
+lillie.test(Regueton)
+pearson.test(Regueton)
+sf.test(Regueton)
+
+```
+
+```{r}
+Otros <- HabitosMusicales$Tiempo[HabitosMusicales$Género == "Otros(indie, Lo-Fi, alt...)"]
+t.test(Otros)$conf.int
+varTest(Otros)$conf.int
+t.test(Otros, mu = 217.50, alternative = "two.sided")
+pnorm(1.4338, lower.tail = FALSE)
+library(fitdistrplus)
+library(nortest)
+ad.test(Otros)
+cvm.test(Otros)
+lillie.test(Otros)
+pearson.test(Otros)
+sf.test(Otros)
+
+```
+```{r}
+library (readxl)
+cuantitativas<-read_excel ("HabitosMusicalesCuantitativas.xlsx")
+cor(cuantitativas )
+
+plot(HabitosMusicales$Tiempo, HabitosMusicales$Peso, xlab = "Tiempo", ylab = "Peso")
+
+RegressionModel <- lm(Tiempo ~ Peso, data=HabitosMusicales)
+
+abline(RegressionModel)
+par(mfrow=c(2,2))
+plot(RegressionModel)
+
+```
+```{r}
+HabitosMusicales$Tiempop <- HabitosMusicales$Tiempo^1
+plot(HabitosMusicales$Tiempop, HabitosMusicales$FrecuenciaEventos^5, xlab="Parque1ˆ1,4", ylab="Parque 2")
+```
+
+
